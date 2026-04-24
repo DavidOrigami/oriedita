@@ -183,7 +183,7 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         if (p3 == null && k3 == null && l3 == null)
             return CircleDrawApolloniusStep.SELECT_3;
 
-        processApollonius();
+        process_apollonius();
 
         if(indicators.size() > 1)
             return CircleDrawApolloniusStep.SELECT_RESULT;
@@ -227,7 +227,7 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         return CircleDrawApolloniusStep.SELECT_1;
     }
 
-    private void processApollonius() {
+    private void process_apollonius() {
         int numC = ((k1 !=null) ? 1:0) + ((k2 !=null) ? 1:0) + ((k3 !=null) ? 1:0);
 
         // Reshuffle to make sure they are populated from 1 to 3. The selection process can e.g. leave l1 empty but have l2 populated
@@ -240,13 +240,13 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         if(k2==null && k3!=null)    k2 = k3;
 
         // Points are represented by circles with radius 0, so 6/10 variants are redundant
-        if(numC==0)  processApollonius_LLL();
-        if(numC==1)  processApollonius_CLL();
-        if(numC==2)  processApollonius_CCL();
-        if(numC==3)  processApollonius_CCC();
+        if(numC==0)  process_apollonius_LLL();
+        if(numC==1)  process_apollonius_CLL();
+        if(numC==2)  process_apollonius_CCL();
+        if(numC==3)  process_apollonius_CCC();
     }
 
-    private void processApollonius_LLL() {
+    private void process_apollonius_LLL() {
         final double EPS = 1e-6;
         final double MIN_R = 1e-3;
         final double MAX_R = 1e6;
@@ -257,88 +257,94 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
             for (int s2 : signs) {
                 for (int s3 : signs) {
 
-                    Circle c = solveLLL(s1, s2, s3);
-                    if (c == null) continue;
+                    Circle c = solve_LLL(s1, s2, s3);
+                    if (c == null)
+                        continue;
 
-                    if (c.getR() < MIN_R || c.getR() > MAX_R) continue;
+                    if (c.getR() < MIN_R || c.getR() > MAX_R)
+                        continue;
 
-                    if (!isDuplicate(c, indicators, EPS)) {
+                    if (!is_valid_circle(c, indicators, EPS)) {
                         indicators.add(c);
                     }
                 }
             }
         }
     }
-    private Circle solveLLL(int s1, int s2, int s3) {
+    private Circle solve_LLL(int s1, int s2, int s3) {
 
         double[][] lin = new double[3][4];
 
-        lin[0] = coeffLinEquPar(l1, s1);
-        lin[1] = coeffLinEquPar(l2, s2);
-        lin[2] = coeffLinEquPar(l3, s3);
+        lin[0] = calc_coefficients_from_line(l1, s1);
+        lin[1] = calc_coefficients_from_line(l2, s2);
+        lin[2] = calc_coefficients_from_line(l3, s3);
 
         double det0 =
                 lin[0][1]*lin[1][2]*lin[2][3] +
                         lin[0][2]*lin[1][3]*lin[2][1] +
-                        lin[0][3]*lin[1][1]*lin[2][2]
-                        - lin[2][1]*lin[1][2]*lin[0][3]
-                        - lin[2][2]*lin[1][3]*lin[0][1]
-                        - lin[2][3]*lin[1][1]*lin[0][2];
+                        lin[0][3]*lin[1][1]*lin[2][2] -
+                        lin[2][1]*lin[1][2]*lin[0][3] -
+                        lin[2][2]*lin[1][3]*lin[0][1] -
+                        lin[2][3]*lin[1][1]*lin[0][2];
 
-        if (Math.abs(det0) < 1e-9) return null;
+        if (Math.abs(det0) < 1e-9)
+            return null;
 
         double detX =
                 lin[0][0]*lin[1][2]*lin[2][3] +
                         lin[0][2]*lin[1][3]*lin[2][0] +
-                        lin[0][3]*lin[1][0]*lin[2][2]
-                        - lin[2][0]*lin[1][2]*lin[0][3]
-                        - lin[2][2]*lin[1][3]*lin[0][0]
-                        - lin[2][3]*lin[1][0]*lin[0][2];
+                        lin[0][3]*lin[1][0]*lin[2][2] -
+                        lin[2][0]*lin[1][2]*lin[0][3] -
+                        lin[2][2]*lin[1][3]*lin[0][0] -
+                        lin[2][3]*lin[1][0]*lin[0][2];
 
         double detY =
                 lin[0][1]*lin[1][0]*lin[2][3] +
                         lin[0][0]*lin[1][3]*lin[2][1] +
-                        lin[0][3]*lin[1][1]*lin[2][0]
-                        - lin[2][1]*lin[1][0]*lin[0][3]
-                        - lin[2][0]*lin[1][3]*lin[0][1]
-                        - lin[2][3]*lin[1][1]*lin[0][0];
+                        lin[0][3]*lin[1][1]*lin[2][0] -
+                        lin[2][1]*lin[1][0]*lin[0][3] -
+                        lin[2][0]*lin[1][3]*lin[0][1] -
+                        lin[2][3]*lin[1][1]*lin[0][0];
 
         double detR =
                 lin[0][1]*lin[1][2]*lin[2][0] +
                         lin[0][2]*lin[1][0]*lin[2][1] +
-                        lin[0][0]*lin[1][1]*lin[2][2]
-                        - lin[2][1]*lin[1][2]*lin[0][0]
-                        - lin[2][2]*lin[1][0]*lin[0][1]
-                        - lin[2][0]*lin[1][1]*lin[0][2];
+                        lin[0][0]*lin[1][1]*lin[2][2] -
+                        lin[2][1]*lin[1][2]*lin[0][0] -
+                        lin[2][2]*lin[1][0]*lin[0][1] -
+                        lin[2][0]*lin[1][1]*lin[0][2];
 
         double x = detX / det0;
         double y = detY / det0;
         double r = detR / det0;
 
-        if (r <= 0) return null;
+        if (r <= 0)
+            return null;
 
-        return new Circle(x, y, r, LineColor.CYAN_3);
+        return new Circle(x, y, r, LineColor.PURPLE_8);
     }
 
-    private void processApollonius_CLL() {
+    private void process_apollonius_CLL() {
         final double EPS = 1e-6;
         final double MIN_R = 1e-3;
         final double MAX_R = 1e6;
 
-        int[] signs = {-1, 1}; // s1 (circle), s2, s3 (lines)
+        int[] signs = {-1, 1};
 
         for (int s1 : signs) {
             for (int s2 : signs) {
                 for (int s3 : signs) {
 
-                    Circle[] sols = solveCLL(s1, s2, s3);
+                    Circle[] sols = solve_CLL(s1, s2, s3);
 
                     for (Circle c : sols) {
-                        if (c == null) continue;
+                        if (c == null)
+                            continue;
 
-                        if (c.getR() < MIN_R || c.getR() > MAX_R) continue;
+                        if (c.getR() < MIN_R || c.getR() > MAX_R)
+                            continue;
 
-                        if (!isDuplicate(c, indicators, EPS)) {
+                        if (!is_valid_circle(c, indicators, EPS)) {
                             indicators.add(c);
                         }
                     }
@@ -346,14 +352,14 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
             }
         }
     }
-    private Circle[] solveCLL(int s1, int s2, int s3) {
+    private Circle[] solve_CLL(int s1, int s2, int s3) {
 
         double[][] lin = new double[2][4];
 
-        lin[0] = coeffLinEquPar(l1, s2);
-        lin[1] = coeffLinEquPar(l2, s3);
+        lin[0] = calc_coefficients_from_line(l1, s2);
+        lin[1] = calc_coefficients_from_line(l2, s3);
 
-        double[][] cd = solution23(lin);
+        double[][] cd = solve_2_linear_equations_with_3_unknown(lin);
 
         double c1 = cd[0][0], d1 = cd[0][1];
         double c2 = cd[1][0], d2 = cd[1][1];
@@ -361,22 +367,19 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         double e1 = d1 - k1.getX();
         double e2 = d2 - k1.getY();
 
-        double kr = k1.getR();
+        double kR = k1.getR();
 
         double denom = 1 - c1*c1 - c2*c2;
-        if (Math.abs(denom) < 1e-9) return new Circle[]{null, null};
+        if (Math.abs(denom) < 1e-9)
+            return new Circle[]{null, null};
 
-        double discr =
-                (c1*c1 + c2*c2) * kr * kr +
-                        2 * (c1*e1 + c2*e2) * kr * s1 +
-                        (1 - c1*c1) * e2 * e2 +
-                        (1 - c2*c2) * e1 * e1 +
-                        2 * c1 * c2 * e1 * e2;
+        double discr = calc_discriminant(c1, c2, s1, kR, e1, e2);
 
-        if (discr < 0) return new Circle[]{null, null};
+        if (discr < 0)
+            return new Circle[]{null, null};
 
         double root = Math.sqrt(discr);
-        double h = kr * s1 + c1*e1 + c2*e2;
+        double h = kR * s1 + c1*e1 + c2*e2;
 
         double r1 = (h + root) / denom;
         double r2 = (h - root) / denom;
@@ -386,18 +389,27 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         if (r1 > 0) {
             double x = c1*r1 + d1;
             double y = c2*r1 + d2;
-            result[0] = new Circle(x, y, r1, LineColor.CYAN_3);
+            result[0] = new Circle(x, y, r1, LineColor.PURPLE_8);
         }
 
         if (r2 > 0 && discr > 1e-12) {
             double x = c1*r2 + d1;
             double y = c2*r2 + d2;
-            result[1] = new Circle(x, y, r2, LineColor.CYAN_3);
+            result[1] = new Circle(x, y, r2, LineColor.PURPLE_8);
         }
 
         return result;
     }
-    private void processApollonius_CCL() {
+
+    private double calc_discriminant(double c1, double c2, double s1, double kR, double e1, double e2) {
+        return (c1*c1 + c2*c2) * kR * kR +
+                2 * (c1*e1 + c2*e2) * kR * s1 +
+                (1 - c1*c1) * e2 * e2 +
+                (1 - c2*c2) * e1 * e1 +
+                2 * c1 * c2 * e1 * e2;
+    }
+
+    private void process_apollonius_CCL() {
         final double EPS = 1e-6;
         final double MIN_R = 1e-3;
         final double MAX_R = 1e6;
@@ -408,14 +420,16 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
             for (int s2 : signs) {
                 for (int s3 : signs) {
 
-                    Circle[] sols = solveCCL(s1, s2, s3);
+                    Circle[] sols = solve_CCL(s1, s2, s3);
 
                     for (Circle c : sols) {
-                        if (c == null) continue;
+                        if (c == null)
+                            continue;
 
-                        if (c.getR() < MIN_R || c.getR() > MAX_R) continue;
+                        if (c.getR() < MIN_R || c.getR() > MAX_R)
+                            continue;
 
-                        if (!isDuplicate(c, indicators, EPS)) {
+                        if (!is_valid_circle(c, indicators, EPS)) {
                             indicators.add(c);
                         }
                     }
@@ -424,17 +438,14 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         }
     }
 
-    private Circle[] solveCCL(int s1, int s2, int s3) {
+    private Circle[] solve_CCL(int s1, int s2, int s3) {
 
         double[][] lin = new double[2][4];
-        Circle k1 = this.k1;
-        Circle k2 = this.k2;
-        LineSegment g = l1;
 
-        lin[0] = coeffLinEqu(k1, s1, k2, s2);
-        lin[1] = coeffLinEquPar(g, s3);
+        lin[0] = calc_coefficients_from_2_circles(k1, s1, k2, s2);
+        lin[1] = calc_coefficients_from_line(l1, s3);
 
-        double[][] cd = solution23(lin);
+        double[][] cd = solve_2_linear_equations_with_3_unknown(lin);
 
         double c1 = cd[0][0], d1 = cd[0][1];
         double c2 = cd[1][0], d2 = cd[1][1];
@@ -442,22 +453,17 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         double e1 = d1 - k1.getX();
         double e2 = d2 - k1.getY();
 
-        double rK = k1.getR();
-
         double denom = 1 - c1*c1 - c2*c2;
-        if (Math.abs(denom) < 1e-9) return new Circle[]{null, null};
+        if (Math.abs(denom) < 1e-9)
+            return new Circle[]{null, null};
 
-        double discr =
-                (c1*c1 + c2*c2) * rK * rK +
-                        2 * (c1*e1 + c2*e2) * rK * s1 +
-                        (1 - c1*c1) * e2 * e2 +
-                        (1 - c2*c2) * e1 * e1 +
-                        2 * c1 * c2 * e1 * e2;
+        double discr = calc_discriminant(c1, c2, s1, k1.getR(), e1, e2);
 
-        if (discr < 0) return new Circle[]{null, null};
+        if (discr < 0)
+            return new Circle[]{null, null};
 
         double root = Math.sqrt(discr);
-        double h = rK * s1 + c1*e1 + c2*e2;
+        double h = k1.getR() * s1 + c1*e1 + c2*e2;
 
         double r1 = (h + root) / denom;
         double r2 = (h - root) / denom;
@@ -467,19 +473,19 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         if (r1 > 0) {
             double x = c1 * r1 + d1;
             double y = c2 * r1 + d2;
-            result[0] = new Circle(x, y, r1, LineColor.CYAN_3);
+            result[0] = new Circle(x, y, r1, LineColor.PURPLE_8);
         }
 
         if (r2 > 0 && discr > 1e-12) {
             double x = c1 * r2 + d1;
             double y = c2 * r2 + d2;
-            result[1] = new Circle(x, y, r2,  LineColor.CYAN_3);
+            result[1] = new Circle(x, y, r2,  LineColor.PURPLE_8);
         }
 
         return result;
     }
 
-    private void processApollonius_CCC() {
+    private void process_apollonius_CCC() {
         final double EPS = 1e-6;
         final double MIN_R = 1e-3;
         final double MAX_R = 1e6;
@@ -490,14 +496,16 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
             for (int s2 : signs) {
                 for (int s3 : signs) {
 
-                    Circle[] sols = solveCCC(s1, s2, s3);
+                    Circle[] sols = solve_CCC(s1, s2, s3);
 
                     for (Circle c : sols) {
-                        if (c == null) continue;
+                        if (c == null)
+                            continue;
 
-                        if (c.getR() < MIN_R || c.getR() > MAX_R) continue;
+                        if (c.getR() < MIN_R || c.getR() > MAX_R)
+                            continue;
 
-                        if (!isDuplicate(c, indicators, EPS)) {
+                        if (!is_valid_circle(c, indicators, EPS)) {
                             indicators.add(c);
                         }
                     }
@@ -506,54 +514,58 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         }
     }
 
-    private Circle[] solveCCC(int s1, int s2, int s3) {
+    private Circle[] solve_CCC(int s1, int s2, int s3) {
         double x1 = k1.getX(), y1 = k1.getY(), r1 = k1.getR();
         double x2 = k2.getX(), y2 = k2.getY(), r2 = k2.getR();
         double x3 = k3.getX(), y3 = k3.getY(), r3 = k3.getR();
+
+        // Signed radii
         double sr1 = s1 * r1;
         double sr2 = s2 * r2;
         double sr3 = s3 * r3;
 
-        double Ka = -Math.pow(sr1, 2) + Math.pow(sr2, 2) + Math.pow(x1, 2) - Math.pow(x2, 2) + Math.pow(y1, 2) - Math.pow(y2, 2);
-        double Kb = -Math.pow(sr1, 2) + Math.pow(sr3, 2) + Math.pow(x1, 2) - Math.pow(x3, 2) + Math.pow(y1, 2) - Math.pow(y3, 2);
+        double Ka = -Math.pow(sr1,2) + Math.pow(sr2,2) + Math.pow(x1,2) - Math.pow(x2,2) + Math.pow(y1,2) - Math.pow(y2,2);
+        double Kb = -Math.pow(sr1,2) + Math.pow(sr3,2) + Math.pow(x1,2) - Math.pow(x3,2) + Math.pow(y1,2) - Math.pow(y3,2);
 
         double D = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
 
         // avoid degenerate case
-        if (Math.abs(D) < 1e-9) return new Circle[]{null, null};
+        if (Math.abs(D) < 1e-9)
+            return new Circle[]{null, null};
 
-        double A0 = (Ka * (y1 - y3) + Kb * (y2 - y1)) / (2 * D);
+        double A0 =  (Ka * (y1 - y3) + Kb * (y2 - y1)) / (2 * D);
         double B0 = -(Ka * (x1 - x3) + Kb * (x2 - x1)) / (2 * D);
 
         double A1 = -(sr1 * (y2 - y3) + sr2 * (y3 - y1) + sr3 * (y1 - y2)) / D;
-        double B1 = (sr1 * (x2 - x3) + sr2 * (x3 - x1) + sr3 * (x1 - x2)) / D;
+        double B1 =  (sr1 * (x2 - x3) + sr2 * (x3 - x1) + sr3 * (x1 - x2)) / D;
 
-        double C0 = Math.pow(A0, 2) - 2 * A0 * x1 + Math.pow(B0, 2) - 2 * B0 * y1 - Math.pow(sr1, 2) + Math.pow(x1, 2) + Math.pow(y1, 2);
-        double C1 = A0 * A1 - A1 * x1 + B0 * B1 - B1 * y1 - sr1;
-        double C2 = Math.pow(A1, 2) + Math.pow(B1, 2) - 1;
+        double C0 = - 2*A0*x1 - 2*B0*y1 + Math.pow(A0,2) + Math.pow(B0,2) - Math.pow(sr1,2) + Math.pow(x1,2) + Math.pow(y1,2);
+        double C1 = A0*A1 - A1*x1 + B0*B1 - B1*y1 - sr1;
+        double C2 = Math.pow(A1,2) + Math.pow(B1,2) - 1;
 
-        double discriminant = C1 * C1 - C0 * C2;
+        double discriminant = C1*C1 - C0*C2;
 
-        if (discriminant < 0) return new Circle[]{null, null};
+        if (discriminant < 0)
+            return new Circle[]{null, null};
 
-        double sqrt = Math.sqrt(discriminant);
-        double[] solutions = { (-C1 - sqrt) / C2, (-C1 + sqrt) / C2 };
+        double[] solutions = { -(C1+Math.sqrt(discriminant)) / C2, (-C1 + Math.sqrt(discriminant)) / C2 };
 
         Circle[] result = new Circle[2];
 
         int i = 0;
         for (double r : solutions) {
-            if (Double.isNaN(r) || Double.isInfinite(r)) continue;
+            if (Double.isNaN(r) || Double.isInfinite(r))
+                continue;
 
             double x = A0 + A1 * r;
             double y = B0 + B1 * r;
-            result[i]=new Circle(x, y, Math.abs(r), LineColor.PURPLE_8);
+            result[i] = new Circle(x, y, Math.abs(r), LineColor.PURPLE_8);
             i++;
         }
         return result;
     }
 
-    private double[] coeffLinEquPar(LineSegment g, int s) {
+    private double[] calc_coefficients_from_line(LineSegment g, int s) {
         double x1 = g.getA().getX();
         double y1 = g.getA().getY();
         double x2 = g.getB().getX();
@@ -565,52 +577,46 @@ public class MouseHandlerCircleDrawApollonius extends StepMouseHandler<CircleDra
         double r0 = dy * x1 - dx * y1;
         double r1 = dy;
         double r2 = -dx;
-        double r3 = -s * Math.sqrt(dx*dx + dy*dy);
+        double r3 = s * g.determineLength();
 
         return new double[]{r0, r1, r2, r3};
     }
+    private double[] calc_coefficients_from_2_circles(Circle k1, int s1, Circle k2, int s2) {
+        double x1 = k1.getX(), y1 = k1.getY(), r1 = k1.getR();
+        double x2 = k2.getX(), y2 = k2.getY(), r2 = k2.getR();
 
-    private double[][] solution23(double[][] e) {
+        double co1 = Math.pow(x2,2) - Math.pow(x1,2) + Math.pow(y2,2) - Math.pow(y1,2) + Math.pow(r1,2) - Math.pow(r2,2);
+        double co2 = 2 * (x2 - x1);
+        double co3 = 2 * (y2 - y1);
+        double co4 = 2 * (s1*r1 - s2*r2);
 
+        return new double[]{co1, co2, co3, co4};
+    }
+
+    // Solve system of linear equations with 2 functions and 3 unknowns
+    private double[][] solve_2_linear_equations_with_3_unknown(double[][] e) {
+        // Numerator
         double det0 = e[0][1]*e[1][2] - e[1][1]*e[0][2];
 
-        if (Math.abs(det0) < 1e-9) {
+        if (Math.abs(det0) < 1e-9)
             return new double[][]{{0,0},{0,0}}; // degenerate (parallel lines)
-        }
 
-        double det1r = e[1][3]*e[0][2] - e[0][3]*e[1][2];
-        double det1  = e[0][0]*e[1][2] - e[1][0]*e[0][2];
+        // Denominators
+        double det1 = e[1][3]*e[0][2] - e[0][3]*e[1][2];
+        double det2 = e[0][0]*e[1][2] - e[1][0]*e[0][2];
+        double det3 = e[1][1]*e[0][3] - e[0][1]*e[1][3];
+        double det4 = e[0][1]*e[1][0] - e[1][1]*e[0][0];
 
-        double det2r = e[1][1]*e[0][3] - e[0][1]*e[1][3];
-        double det2  = e[0][1]*e[1][0] - e[1][1]*e[0][0];
-
-        return new double[][]{
-                {det1r / det0, det1 / det0},
-                {det2r / det0, det2 / det0}
-        };
+        return new double[][]{{det1/det0, det2/det0}, {det3/det0, det4/det0}};
     }
-    private boolean isDuplicate(Circle c, List<Circle> list, double eps) {
+    private boolean is_valid_circle(Circle c, List<Circle> list, double eps) {
         for (Circle other : list) {
-            double dx = c.getX() - other.getX();
-            double dy = c.getY() - other.getY();
             double dr = c.getR() - other.getR();
 
-            if (Math.sqrt(dx*dx + dy*dy) < eps && Math.abs(dr) < eps) {
+            if (c.determineCenter().distance(other.determineCenter()) < eps && Math.abs(dr) < eps) {
                 return true;
             }
         }
         return false;
-    }
-    private double[] coeffLinEqu(Circle k1, int s1, Circle k2, int s2) {
-
-        double x1 = k1.getX(), y1 = k1.getY(), r1 = k1.getR();
-        double x2 = k2.getX(), y2 = k2.getY(), r2 = k2.getR();
-
-        double r0 = x2*x2 - x1*x1 + y2*y2 - y1*y1 + r1*r1 - r2*r2;
-        double r1c = 2 * (x2 - x1);
-        double r2c = 2 * (y2 - y1);
-        double r3 = 2 * (s1*r1 - s2*r2);
-
-        return new double[]{r0, r1c, r2c, r3};
     }
 }
