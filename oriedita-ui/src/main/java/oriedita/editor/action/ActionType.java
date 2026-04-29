@@ -142,6 +142,7 @@ public enum ActionType {
     circleDrawTangentLineAction("circleDrawTangentLineAction"),
     circleDrawThreePointAction("circleDrawThreePointAction"),
     circleDrawApolloniusAction("circleDrawApolloniusAction"),
+    circleDrawApolloniusRadiusAction("circleDrawApolloniusRadiusAction"),
     circleDrawInvertedAction("circleDrawInvertedAction"),
     ckOAction("ckOAction"),
     ckTAction("ckTAction"),
