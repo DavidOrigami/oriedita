@@ -26,7 +26,7 @@ enum CircleDrawApolloniusRadiusStep {
 
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_APOLLONIUS_RADIUS_109)
-public class MouseHandlerCircleDrawApolloniusOffset extends StepMouseHandler<CircleDrawApolloniusRadiusStep> {
+public class MouseHandlerCircleDrawApolloniusRadius extends StepMouseHandler<CircleDrawApolloniusRadiusStep> {
     private Point p1,p2, anchorPoint, releasePoint;
     private LineSegment l1, l2, previewSegment;
     private Circle k1, k2, result;
@@ -37,7 +37,7 @@ public class MouseHandlerCircleDrawApolloniusOffset extends StepMouseHandler<Cir
 
 
     @Inject
-    public MouseHandlerCircleDrawApolloniusOffset() {
+    public MouseHandlerCircleDrawApolloniusRadius() {
         super(CircleDrawApolloniusRadiusStep.SELECT_1);
         steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawApolloniusRadiusStep.SELECT_1,
                 this::move_drag_select_1,
