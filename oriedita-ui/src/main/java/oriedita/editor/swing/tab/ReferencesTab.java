@@ -183,7 +183,7 @@ public class ReferencesTab {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(concentricCircleDropdown, gbc);
         apolloniusCircleDropdown = new DropdownToolButton();
-        apolloniusCircleDropdown.setText("3pointCircle");
+        apolloniusCircleDropdown.setText("tangentCircle");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
