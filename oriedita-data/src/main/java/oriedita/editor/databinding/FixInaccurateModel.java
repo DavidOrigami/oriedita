@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @ApplicationScoped
-public class FixPrecisionModel extends AbstractModel {
+public class FixInaccurateModel extends AbstractModel {
     private double precision_22_5;
     private double precision_BPLocal22_5;
     private boolean use_BP;
@@ -22,7 +22,7 @@ public class FixPrecisionModel extends AbstractModel {
     private boolean isData_BP;
 
     @Inject
-    public FixPrecisionModel() {
+    public FixInaccurateModel() {
         reset();
     }
 

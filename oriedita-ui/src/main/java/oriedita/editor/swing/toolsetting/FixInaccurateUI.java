@@ -8,7 +8,7 @@ import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.action.ActionType;
-import oriedita.editor.databinding.FixPrecisionModel;
+import oriedita.editor.databinding.FixInaccurateModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
 import oriedita.editor.service.BindingService;
@@ -27,7 +27,7 @@ import java.awt.Insets;
 
 @ApplicationScoped
 @UiFor(MouseHandlerSettingGroup.FIX_PRECISION)
-public class FixPrecisionUi implements MouseHandlerUi {
+public class FixInaccurateUI implements MouseHandlerUi {
     private JPanel root;
     private JSlider fixPrecision_22_5_Slider;
     private JLabel fixPrecision_22_5_Label;
@@ -41,7 +41,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
     private JLabel fixPrecision_Seperator;
 
     private final ButtonService buttonService;
-    private final FixPrecisionModel fixPrecisionModel;
+    private final FixInaccurateModel fixInaccurateModel;
     private final BindingService bindingService;
 
     private double sliderValue_22_5;
@@ -50,9 +50,9 @@ public class FixPrecisionUi implements MouseHandlerUi {
     private boolean updating_BP;
 
     @Inject
-    public FixPrecisionUi(ButtonService buttonService, FixPrecisionModel fixPrecisionModel, BindingService bindingService) {
+    public FixInaccurateUI(ButtonService buttonService, FixInaccurateModel fixInaccurateModel, BindingService bindingService) {
         this.buttonService = buttonService;
-        this.fixPrecisionModel = fixPrecisionModel;
+        this.fixInaccurateModel = fixInaccurateModel;
         this.bindingService = bindingService;
     }
 
@@ -63,9 +63,9 @@ public class FixPrecisionUi implements MouseHandlerUi {
         sliderValue_22_5 = fixPrecision_22_5_Slider.getValue() / sliderScale;
         sliderValue_BP = fixPrecision_BPLocal22_5_Slider.getValue() / sliderScale;
         buttonService.addDefaultListener($$$getRootComponent$$$());
-        bindingService.addBinding(fixPrecisionModel, "precision_22_5", fixPrecision_22_5_DraggableTextField, new DoubleConverter("0.0##"));
+        bindingService.addBinding(fixInaccurateModel, "precision_22_5", fixPrecision_22_5_DraggableTextField, new DoubleConverter("0.0##"));
         buttonService.registerTextField(fixPrecision_22_5_DraggableTextField, ActionType.setFixPrecisionAction.action());
-        bindingService.addBinding(fixPrecisionModel, "precision_BPLocal22_5", fixPrecision_BPLocal22_5_DraggableTextField, new DoubleConverter("0.0##"));
+        bindingService.addBinding(fixInaccurateModel, "precision_BPLocal22_5", fixPrecision_BPLocal22_5_DraggableTextField, new DoubleConverter("0.0##"));
         buttonService.registerTextField(fixPrecision_BPLocal22_5_DraggableTextField, ActionType.setFixPrecisionAction.action());
         buttonService.registerButton(fixPrecision_BP_CheckBox, ActionType.setFixPrecisionAction.action());
         buttonService.registerButton(fixPrecision_22_5_CheckBox, ActionType.setFixPrecisionAction.action());
@@ -89,7 +89,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
             fixPrecision_22_5_Slider.setEnabled(fixPrecision_22_5_CheckBox.isSelected());
             fixPrecision_22_5_DraggableTextField.setEnabled(fixPrecision_22_5_CheckBox.isSelected());
             fixPrecision_22_5_Label.setEnabled(fixPrecision_22_5_CheckBox.isSelected());
-            fixPrecisionModel.setUse_22_5(fixPrecision_22_5_CheckBox.isSelected());
+            fixInaccurateModel.setUse_22_5(fixPrecision_22_5_CheckBox.isSelected());
         });
 
         //Add listener for BP check box
@@ -105,7 +105,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
             }
 
             fixPrecision_BPLocal22_5_CheckBox.setEnabled(fixPrecision_BP_CheckBox.isSelected());
-            fixPrecisionModel.setUse_BP(fixPrecision_BP_CheckBox.isSelected());
+            fixInaccurateModel.setUse_BP(fixPrecision_BP_CheckBox.isSelected());
         });
 
         // Add listener for local 22.5° within BP check box
@@ -113,7 +113,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
             fixPrecision_BPLocal22_5_Slider.setEnabled(fixPrecision_BPLocal22_5_CheckBox.isSelected());
             fixPrecision_BPLocal22_5_DraggableTextField.setEnabled(fixPrecision_BPLocal22_5_CheckBox.isSelected());
             fixPrecision_BPLocal22_5_Label.setEnabled(fixPrecision_BPLocal22_5_CheckBox.isSelected());
-            fixPrecisionModel.setUse_BPLocal22_5(fixPrecision_BPLocal22_5_CheckBox.isSelected());
+            fixInaccurateModel.setUse_BPLocal22_5(fixPrecision_BPLocal22_5_CheckBox.isSelected());
         });
 
         // Add listener to 22.5° precision slider
@@ -121,7 +121,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
             if (!updating_22_5) {
                 updating_22_5 = true;
                 sliderValue_22_5 = fixPrecision_22_5_Slider.getValue() / sliderScale;
-                fixPrecisionModel.setPrecision_22_5(sliderValue_22_5);
+                fixInaccurateModel.setPrecision_22_5(sliderValue_22_5);
                 updating_22_5 = false;
             }
         });
@@ -131,7 +131,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
             if (!updating_BP) {
                 updating_BP = true;
                 sliderValue_BP = fixPrecision_BPLocal22_5_Slider.getValue() / sliderScale;
-                fixPrecisionModel.setPrecision_BPLocal22_5(sliderValue_BP);
+                fixInaccurateModel.setPrecision_BPLocal22_5(sliderValue_BP);
                 updating_BP = false;
             }
         });
@@ -159,7 +159,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
                     try {
                         sliderValue_22_5 = Double.parseDouble(fixPrecision_22_5_DraggableTextField.getText());
                         fixPrecision_22_5_Slider.setValue((int) (sliderValue_22_5 * sliderScale));
-                        fixPrecisionModel.setPrecision_22_5(sliderValue_22_5);
+                        fixInaccurateModel.setPrecision_22_5(sliderValue_22_5);
                     } catch (RuntimeException e) {
                         Logger.info(e);
                     }
@@ -205,7 +205,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
                     try {
                         sliderValue_BP = Double.parseDouble(fixPrecision_BPLocal22_5_DraggableTextField.getText());
                         fixPrecision_BPLocal22_5_Slider.setValue((int) (sliderValue_BP * sliderScale));
-                        fixPrecisionModel.setPrecision_BPLocal22_5(sliderValue_BP);
+                        fixInaccurateModel.setPrecision_BPLocal22_5(sliderValue_BP);
                     } catch (RuntimeException e) {
                         Logger.info(e);
                     }

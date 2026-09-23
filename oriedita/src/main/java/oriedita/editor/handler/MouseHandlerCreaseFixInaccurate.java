@@ -8,7 +8,7 @@ import org.tinylog.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.FixPrecisionModel;
+import oriedita.editor.databinding.FixInaccurateModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.handler.step.StepFactory;
 import oriedita.editor.handler.step.StepGraph;
@@ -21,14 +21,14 @@ import origami.folding.util.IBulletinBoard;
 @Handles(MouseMode.FIX_INACCURATE_107)
 public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandlerCreaseFixInaccurate.Step> {
     @Inject
-    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixPrecisionModel fixPrecisionModel, GridModel gridModel) {
+    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixInaccurateModel fixInaccurateModel, GridModel gridModel) {
         this.bb = bb;
-        this.fixPrecisionModel = fixPrecisionModel;
+        this.fixInaccurateModel = fixInaccurateModel;
         this.gridModel = gridModel;
     }
 
     private final IBulletinBoard bb;
-    private final FixPrecisionModel fixPrecisionModel;
+    private final FixInaccurateModel fixInaccurateModel;
     private final GridModel gridModel;
 
     private static class FixerResult {
@@ -227,11 +227,6 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }).start();
             return;
         }
-        // If it's a non-square 22.5° CP the xform doesn't know where to place it within the default square,
-        // so it can't be fixed properly
-        boolean isBadFix = (result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare;
-        if(isBadFix)
-            bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
 
         int i = 0;
         var fls = d.getFoldLineSet();
@@ -247,9 +242,15 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
         fls.divideLineSegmentWithNewLines(fls.getTotal() - lines.size(), fls.getTotal());
 
+        // If it's a non-square 22.5° CP the xform doesn't know where to place it within the default square,
+        // so it can't be fixed properly
+        boolean isBadFix = (result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare;
+
         // Record new state and display changed line number when one or more lines changed
         if(result.numFixedLines > 0) {
             d.record();
+            if (isBadFix)
+                bb.write("WARNING: Fix may be bad. Try again with the pattern in the starting area or as a square");
             bb.write("Fixed " + result.numFixedLines + " lines");
             new Thread(() -> {
                 try {
@@ -304,7 +305,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         ArrayList<FixerResult> results = new ArrayList<>();
 
         // Fix BP first
-        if(fixPrecisionModel.getUse_BP()) {
+        if(fixInaccurateModel.getUse_BP()) {
             results.add(fixBP(toFix));
 
             // Exit early if it's probably box-pleated (95% of vertices align with BP, or local 22.5 within BP)
@@ -313,8 +314,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
 
         // Fix 22.5°
-        if(fixPrecisionModel.getUse_22_5()) {
-            double precision22_5 = fixPrecisionModel.getPrecision_22_5()/100.0;
+        if(fixInaccurateModel.getUse_22_5()) {
+            double precision22_5 = fixInaccurateModel.getPrecision_22_5()/100.0;
             results.add(fix22_5(toFix, precision22_5));
         }
         return results;
@@ -342,7 +343,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         long numFixableLines = 0;
 
         // Data for local 22.5° fixing
-        ArrayList<Double> tmp = fixPrecisionModel.getFixData_BP();
+        ArrayList<Double> tmp = fixInaccurateModel.getFixData_BP();
         int fixDataSize = tmp.size();
         double[] fixData = new double[fixDataSize];
         for (int i = 0; i < fixDataSize; i++)
@@ -456,7 +457,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 currentValue = nearestInt;
 
             // Attempt to fix local 22.5°
-            else if(fixPrecisionModel.getUse_BPLocal22_5())
+            else if(fixInaccurateModel.getUse_BPLocal22_5())
                 currentValue = fixBP_22_5(currentValue, fixData, fixDataSize);
 
             // Scale back and write to array
@@ -472,7 +473,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
         double orig = inValue<0 ? -inValue : inValue; // Fix data is only positive
         double outValue = orig;
-        double precision = fixPrecisionModel.getPrecision_BPLocal22_5()/400.0;
+        double precision = fixInaccurateModel.getPrecision_BPLocal22_5()/400.0;
         double origFloor = Math.floor(orig);
         double frac = orig - origFloor;
 
@@ -504,7 +505,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         long numFixableLines = 0;
 
         // Get data necessary for fixing
-        ArrayList<Double> tmp = fixPrecisionModel.getFixData22_5();
+        ArrayList<Double> tmp = fixInaccurateModel.getFixData22_5();
         int fixDataSize = tmp.size();
         double[] fixData = new double[fixDataSize];
         for (int i = 0; i < fixDataSize; i++)
