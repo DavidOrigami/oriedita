@@ -140,12 +140,14 @@ public class FixInaccurateModel extends AbstractModel {
                             // Some positions, despite being positive, use negative values in some variables.
                             // Makes use of binary representation of numbers to invert the variables
                             for(int i = 0; i<16; i++) {
-                                a = (i & 0b1)==0 ? a : -a;      // reverse a if last bit is 1
-                                b = (i & 0b10)==0 ? b : -b;     // reverse b if second to last bit is 1
-                                c = (i & 0b100)==0 ? c : -c;    // etc.
-                                d = (i & 0b1000)==0 ? d : -d;
 
-                                double pos = (a + b * sqrt2) / (c + d * sqrt2);
+                                int _a, _b, _c, _d;
+                                _a = (i & 0b1)==0 ? a : -a;      // reverse a if last bit is 1
+                                _b = (i & 0b10)==0 ? b : -b;     // reverse b if second to last bit is 1
+                                _c = (i & 0b100)==0 ? c : -c;    // etc.
+                                _d = (i & 0b1000)==0 ? d : -d;
+
+                                double pos = (_a + _b * sqrt2) / (_c + _d * sqrt2);
                                 if (pos < 1 && pos > 0)
                                     v.add(pos * bound);
                             }
