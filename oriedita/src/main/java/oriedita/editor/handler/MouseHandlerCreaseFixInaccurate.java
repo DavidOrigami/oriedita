@@ -308,7 +308,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         if(fixInaccurateModel.getUse_BP()) {
             results.add(fixBP(toFix));
 
-            // Exit early if it's probably box-pleated (95% of vertices align with BP, or local 22.5 within BP)
+            // Exit early if it's probably box-pleated (95% of vertices align with BP, or local 22.5° within BP)
             if (results.get(0).numFixableLines > (toFix.size() / 4.0 * .95))
                 return results;
         }
@@ -391,7 +391,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 currentValue = currentValue / 200 * gridSizeSearch;
 
                 // Round to nearest integer
-                nearestInt = (double)Math.round(currentValue);
+                nearestInt = Math.rint(currentValue);
                 if (Math.abs(currentValue - nearestInt) > precision)
                     continue;
                 // Actual fixing happens later so we only need to increment the line counter
@@ -416,8 +416,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
 
         // Determine actual grid. Halves the grid until it finds fewer vertices to fix than original
-        long oldNumFixableLines = numFixableLines;
-        for (int i = 0; i <15; i++) { // 15 is pretty arbitrary here. It shouldn't iterate that much ever.
+        long origNumFixableLines = numFixableLines;
+        for (int i = 0; i <15; i++) { // 15 is pretty arbitrary here. It shouldn't ever iterate that much anyway.
             numFixableLines = 0;
             for (int j = 0; j < toFix.size(); j++) {
                 double currentValue = toFix.get(j);
@@ -426,11 +426,11 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 if ((j % 4) == 0)
                     isLineFixed = false;
 
-                // Scales the position
+                // Scales the position to new grid
                 currentValue = currentValue / 200 * ((double)gridSize/2);
 
-                // Round to nearest integer
-                nearestInt = (double) Math.round(currentValue);
+                // Round to nearest integer, exit iteration early if it isn't close to a whole number (grid point).
+                nearestInt = Math.rint(currentValue);
                 if (Math.abs(currentValue - nearestInt) > precision)
                     continue;
                 // Line counter
@@ -439,7 +439,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                     numFixableLines++;
                 }
             }
-            if (numFixableLines < oldNumFixableLines)
+            if (numFixableLines < origNumFixableLines)
                 break;
             // Lower grid for next iteration and recalculate precision
             gridSize /= 2;
@@ -452,7 +452,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             currentValue = currentValue / 200 * gridSize;
 
             // Round to nearest integer
-            nearestInt = (double)Math.round(currentValue);
+            nearestInt = Math.rint(currentValue);
             if (Math.abs(currentValue - nearestInt) < precision)
                 currentValue = nearestInt;
 
