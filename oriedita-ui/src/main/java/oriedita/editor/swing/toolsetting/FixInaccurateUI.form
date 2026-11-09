@@ -10,7 +10,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="91b12" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="91b12" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -20,41 +20,20 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="6a402" class="javax.swing.JCheckBox" binding="fixPrecision_22_5_CheckBox">
+          <grid id="18ba1" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="4" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="90" height="22"/>
-              </grid>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <label value="22.5°"/>
-              <text value="22.5°"/>
-            </properties>
-          </component>
-          <component id="8f036" class="javax.swing.JCheckBox" binding="fixPrecision_BP_CheckBox">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="90" height="22"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value="Box pleated"/>
-            </properties>
-          </component>
-          <grid id="18ba1" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <opaque value="false"/>
+              <opaque value="true"/>
             </properties>
             <border type="none"/>
             <children>
               <grid id="17a4e" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="3" left="8" bottom="3" right="0"/>
+                <margin top="3" left="8" bottom="3" right="6"/>
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -87,7 +66,7 @@
               </grid>
               <component id="b794b" class="javax.swing.JCheckBox" binding="fixPrecision_BPLocal22_5_CheckBox">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="80" height="22"/>
                   </grid>
                 </constraints>
@@ -95,22 +74,40 @@
                   <text value="Local 22.5°"/>
                 </properties>
               </component>
+              <component id="8f036" class="javax.swing.JCheckBox" binding="fixPrecision_BP_CheckBox">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="90" height="22"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <opaque value="true"/>
+                  <text value="Box pleated"/>
+                </properties>
+              </component>
             </children>
           </grid>
-          <grid id="c336a" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
+          <vspacer id="598cf">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="5"/>
+              </grid>
+            </constraints>
+          </vspacer>
+          <grid id="c336a" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="4" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <opaque value="false"/>
+              <opaque value="true"/>
             </properties>
             <border type="none"/>
             <children>
               <grid id="a68e0" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="3" left="8" bottom="3" right="3"/>
+                <margin top="3" left="8" bottom="3" right="0"/>
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -145,23 +142,26 @@
                   </component>
                 </children>
               </grid>
-              <hspacer id="aed7a">
+              <component id="6a402" class="javax.swing.JCheckBox" binding="fixPrecision_22_5_CheckBox">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="80" height="-1"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="90" height="22"/>
                   </grid>
                 </constraints>
-              </hspacer>
+                <properties>
+                  <label value="22.5°"/>
+                  <text value="22.5°"/>
+                </properties>
+              </component>
             </children>
           </grid>
-          <component id="8f44e" class="javax.swing.JLabel" binding="fixPrecision_Seperator">
+          <hspacer id="aed7a">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="80" height="-1"/>
+              </grid>
             </constraints>
-            <properties>
-              <text value=" ―――――――――――――――――――――――――――――――――――――――――――"/>
-            </properties>
-          </component>
+          </hspacer>
         </children>
       </grid>
     </children>
